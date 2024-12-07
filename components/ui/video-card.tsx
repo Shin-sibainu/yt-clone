@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface VideoCardProps {
   id: string;
@@ -23,9 +24,10 @@ export function VideoCard({
     <Link href={`/watch/${id}`}>
       <div className="group cursor-pointer">
         <div className="relative aspect-video overflow-hidden rounded-xl">
-          <img
+          <Image
             src={thumbnail}
             alt={title}
+            fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute bottom-1 right-1 rounded bg-black/80 px-1 py-0.5 text-xs text-white">

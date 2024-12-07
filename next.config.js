@@ -2,6 +2,20 @@
 const nextConfig = {
   images: {
     domains: ['images.unsplash.com', 'i.vimeocdn.com', 'vimeo.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.vimeocdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'vimeo.com',
+      },
+    ],
   },
   swcMinify: true,
   headers: async () => [

@@ -1,27 +1,31 @@
-import { NextResponse } from 'next/server';
-import { vimeoApi } from '../../../../../lib/vimeo';
-import axios from 'axios';
+import { NextRequest } from "next/server";
+import { vimeoApi } from "../../../../../lib/vimeo";
+import axios from "axios";
 
-export async function GET(
-  _request: Request,
-  { params }: { params: { id: string } }
-) {
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export async function GET(request: NextRequest, { params }: Props) {
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
+
   try {
-    const response = await vimeoApi.get(`/videos/${params.id}`);
-    return NextResponse.json(response.data);
+    const response = await vimeoApi.get(`/videos/${id}`);
+    return Response.json(response.data);
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      return NextResponse.json(
-        { 
-          error: 'Failed to fetch video',
-          details: error.response?.data?.error || error.message 
+      return Response.json(
+        {
+          error: "Failed to fetch video",
+          details: error.response?.data?.error || error.message,
         },
         { status: error.response?.status || 500 }
       );
     }
-    return NextResponse.json(
-      { error: 'An unexpected error occurred' },
+    return Response.json(
+      { error: "An unexpected error occurred" },
       { status: 500 }
     );
   }
-} 
+}

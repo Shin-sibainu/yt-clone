@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { use } from "react";
 import { Header } from "../../../../components/layout/header";
 import type { VimeoVideo } from "../../../../types/vimeo";
 import { ThumbsUp, ThumbsDown, Share2, Clock, Flag } from "lucide-react";
@@ -49,20 +48,30 @@ const RELATED_VIDEOS = [
   },
 ];
 
-export default function WatchPage({
-  params,
-}: {
+type Props = {
   params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+};
+
+export default function WatchPage({ params }: Props) {
+  const [videoId, setVideoId] = useState<string | null>(null);
   const [video, setVideo] = useState<VimeoVideo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    async function getVideoId() {
+      const resolvedParams = await params;
+      setVideoId(resolvedParams.id);
+    }
+    getVideoId();
+  }, [params]);
+
+  useEffect(() => {
+    if (!videoId) return;
+
     async function fetchVideo() {
       try {
-        const response = await fetch(`/api/videos/${id}`);
+        const response = await fetch(`/api/videos/${videoId}`);
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || "Failed to fetch video");
@@ -79,7 +88,7 @@ export default function WatchPage({
     }
 
     fetchVideo();
-  }, [id]);
+  }, [videoId]);
 
   if (loading) {
     return (
@@ -116,7 +125,7 @@ export default function WatchPage({
           <div className="lg:col-span-2">
             <div className="aspect-video w-full bg-black rounded-xl overflow-hidden">
               <iframe
-                src={`https://player.vimeo.com/video/${id}?h=00000000&autoplay=1`}
+                src={`https://player.vimeo.com/video/${videoId}?h=00000000&autoplay=1`}
                 className="w-full h-full"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowFullScreen
